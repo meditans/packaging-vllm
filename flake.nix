@@ -35,23 +35,8 @@
             (mkPoetryEnv {
               python = pkgs.python311;
               projectDir = ./.;
-              overrides = defaultPoetryOverrides.extend (self: super: {
-
-                cloudpickle = super.cloudpickle.overridePythonAttrs (old: {
-                  buildInputs = (old.buildInputs or [ ]) ++ [ super.flit-core ];
-                });
-
-                interegular = super.interegular.overridePythonAttrs (old: {
-                  buildInputs = (old.buildInputs or [ ])
-                    ++ [ super.setuptools ];
-                });
-
-                ninja = super.ninja.overridePythonAttrs (old: {
-                  buildInputs = (old.buildInputs or [ ])
-                    ++ [ super.scikit-build ];
-                });
-
-              });
+              overrides =
+                import ./overrides.nix { inherit defaultPoetryOverrides; };
             })
           ];
         };
