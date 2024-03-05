@@ -119,6 +119,8 @@ let
         final.pkgs.cudaPackages.libcufft
         final.pkgs.cudaPackages.libcurand
         final.pkgs.cudaPackages.libcusparse
+        final.pkgs.cudaPackages.libcusolver
+        final.pkgs.cudaPackages.cutensor
         final.triton
       ] args
     else
@@ -207,6 +209,8 @@ let
     cloudpickle = addBuildInputs [ "flit-core" ];
     ninja = preferWheel;
     nvidia-cusparse-cu12 = withCudaPkgs;
+    nvidia-cusolver-cu12 = withCudaPkgs;
+    cupy-cuda12x = withCudaPkgs;
   };
   buildOpsOverlay = (final: prev:
     builtins.mapAttrs (package: op:
