@@ -19,7 +19,7 @@
         };
 
         inherit (poetry2nix.lib.mkPoetry2Nix { inherit pkgs; })
-          mkPoetryEnv defaultPoetryOverrides;
+          mkPoetryEnv overrides;
 
       in {
 
@@ -35,8 +35,7 @@
             (mkPoetryEnv {
               python = pkgs.python311;
               projectDir = ./.;
-              overrides =
-                import ./overrides.nix { inherit defaultPoetryOverrides; };
+              overrides = import ./overrides.nix { inherit overrides; };
             })
           ];
         };

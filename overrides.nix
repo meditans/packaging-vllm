@@ -1,6 +1,6 @@
 # This overlay was originally from the lmql repo. Part of this could be upstreamed!
 
-{ defaultPoetryOverrides }:
+{ overrides }:
 let
   # Make a fixed-output derivation with a file's contents; can be used to avoid making something depend on the entire
   # lmql source tree when it only needs one file.
@@ -215,4 +215,4 @@ let
         name = package;
         pkg = builtins.getAttr package prev;
       })) buildOps);
-in defaultPoetryOverrides.extend buildOpsOverlay
+in overrides.withDefaults buildOpsOverlay
