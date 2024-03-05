@@ -186,6 +186,7 @@ let
     interegular = addBuildInputs [ "setuptools" ];
     cloudpickle = addBuildInputs [ "flit-core" ];
     ninja = addBuildInputs [ "scikit-build" ];
+    nvidia-cusparse = withCudaInputs;
   };
   buildOpsOverlay = (final: prev:
     builtins.mapAttrs (package: op:
