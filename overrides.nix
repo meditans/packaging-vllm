@@ -104,6 +104,24 @@ let
       } else
         { }));
 
+  withCudaPkgs = { name, final, prev, pkg }@args:
+    if final.pkgs.stdenv.isLinux then
+      addBuildInputs [
+        final.pkgs.cudaPackages.cuda_cudart
+        final.pkgs.cudaPackages.cuda_cupti
+        final.pkgs.cudaPackages.cuda_nvrtc
+        final.pkgs.cudaPackages.cuda_nvtx
+        final.pkgs.cudaPackages.cudnn
+        final.pkgs.cudaPackages.nccl
+        final.pkgs.cudaPackages.libcublas
+        final.pkgs.cudaPackages.libcufft
+        final.pkgs.cudaPackages.libcurand
+        final.pkgs.cudaPackages.libcusparse
+        final.triton
+      ] args
+    else
+      pkg;
+
   withCudaInputs = { name, final, prev, pkg }@args:
     if final.pkgs.stdenv.isLinux then
       addBuildInputs [
@@ -115,7 +133,7 @@ let
         final.nvidia-cufft-cu12
         final.nvidia-curand-cu12
         final.nvidia-cusolver-cu12
-        final.nvidia-cusparse-cu12
+        # final.nvidia-cusparse-cu12
         final.nvidia-nccl-cu12
         final.nvidia-nvtx-cu12
         final.pkgs.cudaPackages.cuda_cudart
@@ -186,7 +204,7 @@ let
     interegular = addBuildInputs [ "setuptools" ];
     cloudpickle = addBuildInputs [ "flit-core" ];
     ninja = addBuildInputs [ "scikit-build" ];
-    nvidia-cusparse = withCudaInputs;
+    nvidia-cusparse-cu12 = withCudaPkgs;
   };
   buildOpsOverlay = (final: prev:
     builtins.mapAttrs (package: op:
