@@ -205,7 +205,7 @@ let
     urllib3 = addBuildInputs [ "hatchling" ];
     interegular = addBuildInputs [ "setuptools" ];
     cloudpickle = addBuildInputs [ "flit-core" ];
-    ninja = addBuildInputs [ "scikit-build" ];
+    ninja = preferWheel;
     nvidia-cusparse-cu12 = withCudaPkgs;
   };
   buildOpsOverlay = (final: prev:
