@@ -211,6 +211,12 @@ let
     nvidia-cusparse-cu12 = withCudaPkgs;
     nvidia-cusolver-cu12 = withCudaPkgs;
     cupy-cuda12x = withCudaPkgs;
+    xformers = composeOps [
+      preferWheel
+      withCudaPkgs
+      (addPatchelfSearchPath [ "torch" ])
+    ];
+    outlines = addBuildInputs [ "setuptools" ];
   };
   buildOpsOverlay = (final: prev:
     builtins.mapAttrs (package: op:
