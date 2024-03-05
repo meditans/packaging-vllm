@@ -179,6 +179,7 @@ let
   buildOps = let
     pkg-config = { final, ... }: final.pkgs.pkg-config;
     openssl = { final, ... }: final.pkgs.openssl;
+    which = { final, ... }: final.pkgs.which;
   in {
     accelerate = composeOps [
       withCudaInputs
@@ -227,6 +228,7 @@ let
     vllm = composeOps [
       withCudaInputs
       (addBuildInputs [ "setuptools" ])
+      (addNativeBuildInputs [ which ])
       addCudaHome
     ];
   };
