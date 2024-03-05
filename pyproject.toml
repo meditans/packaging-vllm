@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "packaging-vllm"
+version = "0.1.0"
+description = ""
+authors = ["Carlo Nucera <carlo.nucera@protonmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+vllm = "^0.3.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
