@@ -217,6 +217,7 @@ let
       (addPatchelfSearchPath [ "torch" ])
     ];
     outlines = addBuildInputs [ "setuptools" ];
+    vllm = composeOps [ withCudaInputs (addBuildInputs [ "setuptools" ]) ];
   };
   buildOpsOverlay = (final: prev:
     builtins.mapAttrs (package: op:
