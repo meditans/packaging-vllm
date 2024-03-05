@@ -170,7 +170,7 @@ let
     pandoc = addBuildInputs [ "setuptools" ];
     pydata-sphinx-theme = preferWheel;
     rouge = addBuildInputs [ "setuptools" ];
-    safetensors = preferWheel; # asRustBuild;
+    safetensors = asRustBuild; # preferWheel
     shibuya = addBuildInputs [ "setuptools" ];
     sphinx-book-theme = preferWheel;
     sphinx-theme-builder = addBuildInputs [ "filit-core" ];
