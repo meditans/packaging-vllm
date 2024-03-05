@@ -56,6 +56,13 @@ let
     else
       pkg;
 
+  # Add CUDA_HOME
+  addCudaHome = { name, final, prev, pkg }@args:
+    pkg.overridePythonAttrs (old: {
+      preBuild = (old.preBuild or "")
+        + ''export CUDA_HOME="${final.pkgs.cudatoolkit}"'';
+    });
+
   # Add extra build-time inputs needed to build from source
   addNativeBuildInputs = extraBuildInputs:
     { name, final, prev, pkg }@args:
@@ -217,7 +224,11 @@ let
       (addPatchelfSearchPath [ "torch" ])
     ];
     outlines = addBuildInputs [ "setuptools" ];
-    vllm = composeOps [ withCudaInputs (addBuildInputs [ "setuptools" ]) ];
+    vllm = composeOps [
+      withCudaInputs
+      (addBuildInputs [ "setuptools" ])
+      addCudaHome
+    ];
   };
   buildOpsOverlay = (final: prev:
     builtins.mapAttrs (package: op:
