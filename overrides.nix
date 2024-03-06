@@ -113,6 +113,26 @@ let
       } else
         { }));
 
+  withCudaToolkit = { name, final, prev, pkg }@args:
+    addBuildInputs [ final.pkgs.cudatoolkit ] args;
+
+  withCudaPkgsSlim = { name, final, prev, pkg }@args:
+    if final.pkgs.stdenv.isLinux then
+      addBuildInputs [
+        final.pkgs.cudaPackages.cuda_cudart
+        final.pkgs.cudaPackages.cudnn
+        final.pkgs.cudaPackages.libcusolver
+        final.pkgs.cudaPackages.cutensor
+        final.pkgs.cudaPackages.nccl
+        #
+        final.pkgs.cudaPackages.cuda_nvrtc
+        final.pkgs.cudaPackages.libcurand
+        final.pkgs.cudaPackages.libcufft
+        # final.pkgs.cudatoolkit
+      ] args
+    else
+      pkg;
+
   withCudaPkgs = { name, final, prev, pkg }@args:
     if final.pkgs.stdenv.isLinux then
       addBuildInputs [
@@ -137,7 +157,7 @@ let
     if final.pkgs.stdenv.isLinux then
       addBuildInputs [
         final.nvidia-cublas-cu12
-        final.nvidia-cuda-cupti-cu12
+        # final.nvidia-cuda-cupti-cu12
         final.nvidia-cuda-nvrtc-cu12
         final.nvidia-cuda-runtime-cu12
         final.nvidia-cudnn-cu12
@@ -181,56 +201,29 @@ let
     openssl = { final, ... }: final.pkgs.openssl;
     which = { final, ... }: final.pkgs.which;
   in {
-    accelerate = composeOps [
-      withCudaInputs
-      (addBuildInputs [ "filelock" "jinja2" "networkx" "setuptools" "sympy" ])
-    ];
-    accessible-pygments = addBuildInputs [ "setuptools" ];
-    aiohttp-sse-client =
-      composeOps [ (addBuildInputs [ "pytest" "pytest-runner" "setuptools" ]) ];
-    auto-gptq =
-      composeOps [ withCudaInputs (addPatchelfSearchPath [ "torch" ]) ];
-    cmake = composeOps [
+    # NEW TRY WITH JUST WHEELS
+    vllm = composeOps [
       preferWheel
-      (addBuildInputs [ "setuptools" "scikit-build" ])
-    ];
-    optimum = composeOps [ withCudaInputs (addBuildInputs [ "setuptools" ]) ];
-    pandas = addBuildInputs [ "versioneer" "tomli" ];
-    peft = withCudaInputs;
-    pandoc = addBuildInputs [ "setuptools" ];
-    pydata-sphinx-theme = preferWheel;
-    rouge = addBuildInputs [ "setuptools" ];
-    safetensors = preferWheel; # asRustBuild;
-    shibuya = addBuildInputs [ "setuptools" ];
-    sphinx-book-theme = preferWheel;
-    sphinx-theme-builder = addBuildInputs [ "filit-core" ];
-    tiktoken = preferWheel; # asRustBuild;
-    tokenizers =
-      preferWheel; # composeOps [ asRustBuild (addBuildInputs [openssl]) (addNativeBuildInputs [ pkg-config ]) ];
-    torch = composeOps [
-      withCudaInputs
-      (addBuildInputs [ "filelock" "jinja2" "networkx" "sympy" ])
-      (addLibstdcpp "libtorch_global_deps.so")
-    ];
-    urllib3 = addBuildInputs [ "hatchling" ];
-    interegular = addBuildInputs [ "setuptools" ];
-    cloudpickle = addBuildInputs [ "flit-core" ];
-    ninja = preferWheel;
-    nvidia-cusparse-cu12 = withCudaPkgs;
-    nvidia-cusolver-cu12 = withCudaPkgs;
-    cupy-cuda12x = withCudaPkgs;
-    xformers = composeOps [
-      preferWheel
-      withCudaPkgs
+      withCudaPkgsSlim
       (addPatchelfSearchPath [ "torch" ])
     ];
-    outlines = addBuildInputs [ "setuptools" ];
-    vllm = composeOps [
-      withCudaInputs
-      (addBuildInputs [ "setuptools" ])
-      (addNativeBuildInputs [ which ])
-      addCudaHome
+    cloudpickle = preferWheel;
+    interegular = preferWheel;
+    ninja = preferWheel;
+    safetensors = preferWheel;
+    tokenizers = preferWheel;
+    nvidia-cusparse-cu12 = composeOps [ withCudaPkgsSlim ];
+    cupy-cuda12x = composeOps [ withCudaPkgsSlim ];
+    nvidia-cusolver-cu12 = withCudaPkgsSlim;
+    scipy = preferWheel;
+    torch = preferWheel;
+    xformers = composeOps [
+      preferWheel
+      withCudaPkgsSlim
+      (addPatchelfSearchPath [ "torch" ])
     ];
+    outlines = preferWheel;
+
   };
   buildOpsOverlay = (final: prev:
     builtins.mapAttrs (package: op:
